@@ -1,11 +1,11 @@
-import { auth } from "@clerk/nextjs";
-
-import prismadb from "@/lib/prismadb";
+//import { auth } from "@clerk/nextjs";
+import { auth, firestore, googleAuthProvider } from "../lib/firebase.js";
+//import prismadb from "@/lib/prismadb";
 
 const DAY_IN_MS = 86_400_000;
 
 export const checkSubscription = async () => {
-  const { userId } = auth();
+  const { userId } = auth;
 
   if (!userId) {
     return false;

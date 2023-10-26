@@ -1,10 +1,16 @@
-import { useContext } from "react";
-import { UserContext } from '../lib/context';
-import { auth, firestore, googleAuthProvider } from "../lib/firebase";
+"use client"
+
+import { useEffect, useState, useCallback, useContext } from "react";
+import { UserContext } from "../../lib/context";
+import { auth, firestore, googleAuthProvider } from "../../lib/firebase";
+import debounce from "lodash.debounce";
+import Metatags from "../../components/Metatags";
 
 export default function Enter(props) {
-	const user = null;
-	const username = null;
+	//const user = null;
+	//const username = null;
+
+	const { user, username } = useContext(UserContext);
 
 	// 1. user signed out <SignInButton />
 	// 2. user signed in, but missing username <UsernameForm />
@@ -12,28 +18,35 @@ export default function Enter(props) {
 
 	return (
 		<main>
+			<Metatags title="Enter" description="Sign up for this amazing app!" />
 			{user ?
-				!username ? <UsernameForm /> : < SignOutButton />
+				!username ? <UsernameForm/> : < SignOutButton/>
 				:
-				<SignInButton />
+				<SignInButton/>
 			}
 		</main>
-	)
+	);
 }
 
-function SignInButton(){
+// Sign in with Google button
+function SignInButton() {
 	const signInWithGoogle = async () => {
 		await auth.signInWithPopup(googleAuthProvider);
 	};
 	return (
 		<button className="btn-google" onClick={signInWithGoogle}>
-			<img src={'/google.png'} /> Sign in with Google
+			<img src={'/google.png'} width="30px" /> Sign in with Google
 		</button>
 	);
 }
-function SignOutButton(){
+
+// Sign Out Button
+
+function SignOutButton() {
 	return <button onClick={() => auth.signOut()}>Sign Out</button>;
 }
+
+// Username form
 function UsernameForm(){
 	const [formValue, setFormValue] = useState('');
 	const [isValid, setIsValid] = useState(false);
@@ -45,7 +58,7 @@ function UsernameForm(){
 		e.preventDefault();
 
 		// create refs for both documents
-		const userDoc = firestore.doc(`users/${{user.uid}}`);
+		const userDoc = firestore.doc(`users/${user.uid}`);
 		const usernameDoc = firestore.doc(`usernames/${formValue}`);
 
 		// Comit both docs together as a batch write
@@ -89,7 +102,40 @@ function UsernameForm(){
 				setIsValid(!exists);
 				setLoading(false);
 			}
-		})
-	)
-	return null;
+		}, 500),
+		[]
+	);
+	return (
+		!username && (
+		<section>
+			<h3>Choose Username</h3>
+			<form onSubmit={onSubmit}>
+				<input name="username" placeholder="myname" value={formValue} onChange={onChange}/>
+				<UsernameMessage username={formValue} isValid={isValid} loading={loading} />
+				<button type="submit" className="btn-green" disabled={!isValid}>
+					Choose
+				</button>
+				<h3>Debug State</h3>
+				<div>
+					Username: {formValue}
+					<br/>
+					Loading: {loading.toString()}
+					<br/>
+					Username Valid: {isValid.toString()}
+				</div>
+			</form>
+		</section>
+	));
+}
+
+function UsernameMessage({ username, isValid, loading }){
+	if(loading) {
+		return <p>Checking...</p>;
+	} else if (isValid) {
+		return <p className="text-success">{username} is available!</p>;
+	} else if (username && !isValid) {
+		return <p className="text-danger">That username is taken!</p>;
+	} else {
+		return <p></p>;
+	}
 }

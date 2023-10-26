@@ -1,13 +1,14 @@
-import { UserButton } from "@clerk/nextjs";
+"use client"
+
 import {useContext} from "react";
 import {UserContext} from "../lib/context.js"
 import { MobileSidebar } from "@/components/mobile-sidebar";
-import { getApiLimitCount } from "../../../../AppData/Roaming/JetBrains/WebStorm2023.3/scratches/api-limit";
 import { checkSubscription } from "@/lib/subscription";
 
 const Navbar = async () => {
     const { user, username } = useContext(UserContext)
-  const apiLimitCount = await getApiLimitCount();
+  //const apiLimitCount = await getApiLimitCount();
+    const apiLimitCount = 10;
   const isPro = await checkSubscription();
 
   return (

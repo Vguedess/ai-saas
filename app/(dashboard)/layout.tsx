@@ -1,14 +1,15 @@
 import Navbar from "@/components/navbar";
 import { Sidebar } from "@/components/sidebar";
 import { checkSubscription } from "@/lib/subscription";
-import { getApiLimitCount } from "../../../../../AppData/Roaming/JetBrains/WebStorm2023.3/scratches/api-limit";
+import { getApiLimitCount } from "../../lib/api-limit.js";
 
 const DashboardLayout = async ({
   children,
 }: {
   children: React.ReactNode
 }) => {
-  const apiLimitCount = await getApiLimitCount();
+  //const apiLimitCount = await getApiLimitCount();
+    const apiLimitCount = 10;
   const isPro = await checkSubscription();
 
   return (
