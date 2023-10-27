@@ -8,8 +8,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Sidebar } from "@/components/sidebar";
 
 export const MobileSidebar = ({
-  apiLimitCount = 0,
-  isPro = false
+  apiLimitCount = 10,
+  isPro = true
 }: {
   apiLimitCount: number;
   isPro: boolean;

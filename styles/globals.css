@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400&display=swap');
 
 :root {
-    --color-bg: #eef0f1;
+    --color-bg: #7cd0fa;
     --color-text: #08090a;
     --color-blue: #3b49df;
     --color-red: #df3b3b;
@@ -189,7 +189,7 @@ button.btn-logo {
 }
 
 .card-info {
-    color: white;
+    color: #47d2be;
     background: var(--color-blue);
 }
 
@@ -218,7 +218,7 @@ input[type="file"] {
 .upload-snippet {
     width: 75%;
     margin-left: auto;
-    background: white;
+    background: #213894;
     padding: 5px;
     margin: 5px 0;
 }

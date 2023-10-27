@@ -5,12 +5,12 @@ import { auth, firestore, googleAuthProvider } from "../lib/firebase.js";
 const DAY_IN_MS = 86_400_000;
 
 export const checkSubscription = async () => {
-  const { userId } = auth;
+  const { uid } = auth;
 
-  if (!userId) {
+  if (!uid) {
     return false;
   }
-
+  /*
   const userSubscription = await prismadb.userSubscription.findUnique({
     where: {
       userId: userId,
@@ -27,6 +27,7 @@ export const checkSubscription = async () => {
     return false;
   }
 
+   */
   const isValid =
     userSubscription.stripePriceId &&
     userSubscription.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS > Date.now()
