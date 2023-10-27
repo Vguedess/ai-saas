@@ -1,9 +1,9 @@
-import { auth } from "@clerk/nextjs";
+//import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { Configuration, OpenAIApi } from "openai";
 
 import { checkSubscription } from "@/lib/subscription";
-import { incrementApiLimit, checkApiLimit } from "../../../../../../AppData/Roaming/JetBrains/WebStorm2023.3/scratches/api-limit";
+//import { incrementApiLimit, checkApiLimit } from "../../../../../../AppData/Roaming/JetBrains/WebStorm2023.3/scratches/api-limit";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -15,14 +15,17 @@ export async function POST(
   req: Request
 ) {
   try {
-    const { userId } = auth();
+    console.log("disable: auth from cleark/nextjs get")
+    //const { userId } = auth();
     const body = await req.json();
     const { messages  } = body;
 
+    /* without auth stage
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+     */
     if (!configuration.apiKey) {
       return new NextResponse("OpenAI API Key not configured.", { status: 500 });
     }
@@ -31,8 +34,10 @@ export async function POST(
       return new NextResponse("Messages are required", { status: 400 });
     }
 
-    const freeTrial = await checkApiLimit();
-    const isPro = await checkSubscription();
+    //const freeTrial = await checkApiLimit();
+    const freeTrial = false;
+    //const isPro = await checkSubscription();
+    const isPro = true;
 
     if (!freeTrial && !isPro) {
       return new NextResponse("Free trial has expired. Please upgrade to pro.", { status: 403 });
@@ -44,7 +49,8 @@ export async function POST(
     });
 
     if (!isPro) {
-      await incrementApiLimit();
+      //await incrementApiLimit();
+      console.log('Code for registering the use of API (conversation')
     }
 
     return NextResponse.json(response.data.choices[0].message);
