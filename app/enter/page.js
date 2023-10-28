@@ -1,15 +1,16 @@
-"use client"
+"use client";
 
-import { useEffect, useState, useCallback, useContext } from "react";
-import { UserContext } from "../../lib/context";
 import { auth, firestore, googleAuthProvider } from "../../lib/firebase";
-import debounce from "lodash.debounce";
+import { doc, writeBatch, getDoc, getFirestore } from "firebase/firestore";
+import { signInWithPopup, signInAnonymously, useSignOut  } from "firebase/auth";
+import { UserContext } from "../../lib/context";
 import Metatags from "../../components/Metatags";
 
-export default function Enter(props) {
-	//const user = null;
-	//const username = null;
+import { useEffect, useState, useCallback, useContext } from "react";
+import debounce from "lodash.debounce";
+import { Navbar_ } from "../../components/Navbar_";
 
+export default function Enter(props) {
 	const { user, username } = useContext(UserContext);
 
 	// 1. user signed out <SignInButton />
@@ -31,19 +32,25 @@ export default function Enter(props) {
 // Sign in with Google button
 function SignInButton() {
 	const signInWithGoogle = async () => {
-		await auth.signInWithPopup(googleAuthProvider);
+		await signInWithPopup(auth, googleAuthProvider)
 	};
+
 	return (
+		<>
 		<button className="btn-google" onClick={signInWithGoogle}>
 			<img src={'/google.png'} width="30px" /> Sign in with Google
 		</button>
+			<button onClick={()=> signInAnonymously(auth)}>
+				Sign in Anonymously
+			</button>
+		</>
 	);
 }
 
 // Sign Out Button
 
 function SignOutButton() {
-	return <button onClick={() => auth.signOut()}>Sign Out</button>;
+	return <button onClick={() => signOut(auth)}>Sign Out</button>;
 }
 
 // Username form
@@ -58,13 +65,17 @@ function UsernameForm(){
 		e.preventDefault();
 
 		// create refs for both documents
-		const userDoc = firestore.doc(`users/${user.uid}`);
-		const usernameDoc = firestore.doc(`usernames/${formValue}`);
+		//const userDoc = firestore.doc(`users/${user.uid}`);
+		const userDoc = doc(getFirestore(), 'users', user.uid);
+		//const usernameDoc = firestore.doc(`usernames/${formValue}`);
+		const usernameDoc = doc(getFirestore(), 'usernames',formValue);
 
 		// Comit both docs together as a batch write
-		const batch = firestore.batch();
+		//const batch = firestore.batch(); - firebase v8
+		const batch = writeBatch(getFirestore());
 		batch.set(userDoc, { username: formValue, photoURL: user.photoURL, displayName: user.displayName});
 		batch.set(usernameDoc, {uid: user.uid});
+
 		await batch.commit();
 	};
 	const onChange = (e) => {
@@ -96,8 +107,12 @@ function UsernameForm(){
 	const checkUsername = useCallback(
 		debounce(async (username) => {
 			if(username.length >= 3) {
-				const ref = firestore.doc(`usernames/${username}`);
-				const { exists } = await ref.get();
+				//const ref = firestore.doc(`usernames/${username}`); - firebase v8
+				const ref = doc(getFirestore(), 'usernames', username);
+
+				//const { exists } = await ref.get(); - firebase v8
+				const snap = await getDoc(ref);
+
 				console.log('Firestore read executed!');
 				setIsValid(!exists);
 				setLoading(false);

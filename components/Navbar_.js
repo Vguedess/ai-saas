@@ -1,28 +1,47 @@
+"use client"
+
 import Link from "next/link";
+//import { useRouter } from "next/router";
+import { useContext } from "react";
+import { UserContext } from "../lib/context";
+import { auth } from "../lib/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 // Top navbar
-export default function Navbar_() {
-	const user = null;
-	const username = null;
+export default function Navbar() {
+
+	const { user, username } = useContext(UserContext);
+
+	const router = useRouter();
+
+	const signOut = () =>{
+		//auth.signOut();
+		signOut(auth);
+		router.reload();
+	}
 
 	return (
 		<nav className="navbar">
 			<ul>
 				<li>
 					<Link href="/">
-						<button className="btn-logo">FEED</button>
+						<button className="btn-logo">BEYOND</button>
 					</Link>
 				</li>
 				{username && (
 					<>
 						<li className="push-left">
+							<button onClick={signOutNow}>Sign Out</button>
+						</li>
+						<li>
 							<Link href="/admin">
 								<button className="btn-blue">Write Posts</button>
 							</Link>
 						</li>
 						<li>
 							<Link href={`/${username}`}>
-								<img src={user?.photoURL} />
+								<img src={user?.photoURL || '/hacker.png' } />
 							</Link>
 						</li>
 					</>

@@ -1,7 +1,12 @@
-import { LandingNavbar } from "@/components/landing-navbar";
-import { LandingHero } from "@/components/landing-hero";
-import { LandingContent } from "@/components/landing-content";
-import Navbar_ from "../../components/Navbar_.js";
+"use client";
+
+import PostFeed from "../../components/PostFeed";
+import Metatags from "../../components/Metatags";
+import Loader from "../../components/Loader";
+import { firestore, postToJSON, getIt } from "../../lib/firebase";
+import { Timestamp, query, where, orderBy, limit, collectionGroup, getDocs, startAfter, getFirestore } from "@firebase/firestore";
+import Navbar from "../../components/Navbar_.js";
+import { useState } from "react";
 
 /*
 const LandingPage = () => {
@@ -18,14 +23,12 @@ const LandingPage = () => {
 export default LandingPage;
 */
 
-"use client";
+
 
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
 import { tools } from "@/constants";
 
 export default function HomePage() {
@@ -33,6 +36,7 @@ export default function HomePage() {
 
     return (
         <div>
+            <Navbar />
             <div className="mb-8 space-y-4">
                 <br/>
                 <h2 className="text-2xl md:text-5xl font-bold text-center text-white">
@@ -41,6 +45,9 @@ export default function HomePage() {
                 <p className="text-muted-foreground font-light text-sm md:text-lg text-center">
                     Beyond Curve Future Features
                 </p>
+            </div>
+            <div>
+                <p className="font-light text-sm text-white text-center"> test ;)</p>
             </div>
             <div className="px-4 md:px-20 lg:px-32 space-y-4">
                 {tools.map((tool) => (

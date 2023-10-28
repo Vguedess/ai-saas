@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
-import { useAuthState } from 'react-firebase-hooks/auth';
+import "./globals.css";
+import Navbar from "ai-saas/components/Navbar_";
 import { UserContext } from '../lib/context';
-import { ToasterProvider } from "../components/toaster-provider";
 import { CrispProvider} from "../components/crisp-provider";
+import { ToasterProvider } from "../components/toaster-provider";
 import { useUserData } from '../lib/hooks';
-import Navbar_ from "../components/Navbar_";
 
 function MyApp({ Component, pageProps }) {
 
@@ -12,10 +11,11 @@ function MyApp({ Component, pageProps }) {
 
 	return (
 		<UserContext.Provider value={userData}>
-			<Navbar_ />
+			<Navbar />
 			<CrispProvider/>
 			<Component {...pageProps} />
 			<ToasterProvider/>
 		</UserContext.Provider>
 	);
 }
+export default MyApp;
